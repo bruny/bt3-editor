@@ -2,4 +2,4 @@
 
 Read saved game .d64 images from the C64 version of Bard's Tale 3
 
-    ./main.py
+    python main.py <disk>.d64

@@ -231,10 +231,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Parse BT3 char disk')
     parser.add_argument('--start', type=int, default=0)
     parser.add_argument('--length', type=int, default=0)
+    parser.add_argument('disk')
     args = parser.parse_args()
-
-    #disk = "chardisk.d64"
-    disk = "14-valarian4.d64"
 
     if args.start > 0:
         print "Reading {0} bytes from pos {1}".format(args.length, args.start)
@@ -295,7 +293,7 @@ if __name__ == "__main__":
 
 
 
-    with open(disk, 'r+b') as di:
+    with open(args.disk, 'r+b') as di:
 
         #09 through 18 (09, 0A, 0B, 0C, 0D, 0E, 0F, 10, 11, 12)
 
