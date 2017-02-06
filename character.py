@@ -185,3 +185,11 @@ class Character(object):
         return '{0} / {1} / {2}'.format(self.__data_as_hexstring(self._bindata[48]),
                                         self.__data_as_hexstring(self._bindata[85:101]),
                                         self.__data_as_hexstring(self._bindata[104:128]))
+
+        # Spells
+        # Agnon is our Chronomancer, hence 1c might imply his lack of spells in other classes
+        # Agnon   Skipped data is 36 / 00 / 00000000000000000001c000000000000000000000000f140c0c0b00000080030000000000000000000000
+        # Taeris  Skipped data is 37 / 00 / fffffffffffffffffffe000000000000000000000000000000000000000080030000000000000000000000
+        # Markus  Skipped data is 36 / 00 / fffffffffffffffffffe000000000000000000000000000000000000000080030000000000000000000000
+        # After learning Gilles Gills
+        # Markus  Skipped data is 36 / 00 / fffffffffffffffffffe000000000020000000000000000000000000000080030000000000000000000000
