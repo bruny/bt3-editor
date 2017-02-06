@@ -20,6 +20,7 @@ import codecs
 import sys
 #import locale
 from items import item
+from character import Character
 
 def reversehex3(hexes):
     # Note that we expect a list of integers in base 10 format
@@ -363,3 +364,28 @@ if __name__ == "__main__":
         for pos in range(0,68):
             read_chars(mm)
 
+        mm.seek(start_save_roster)
+        for i in range(0,68):
+
+            try:
+                char = Character()
+                char.from_bindata(mm.read(128))
+                print char.bindata
+                print char.char_name
+                if char.isparty:
+                    print '(Party)'
+                    print
+                else:
+                    print '{0} ({5}) is a {1} {2} {3} ({4})'.format(char.char_name, char.char_sex, char.char_race, char.char_class, char.char_status, char.char_hexname)
+                    print 'Exp: {0}, Gold: {1}'.format(char.char_exp, char.char_gold)
+                    print char.char_attrs
+                    print 'AC: {4}, HP: {0} / {1}, SP: {2} / {3}'.format(char.char_hp_curr, char.char_hp_max, char.char_sp_curr, char.char_sp_max, char.char_ac)
+                    print 'Portrait: {0}'.format(char.char_portrait)
+                    print char.char_items
+                    print 'Special abilities: {0}'.format(char.char_abilities)
+                    print '{0}'.format(char.unidentifieddata)
+                    print
+            except ValueError as e:
+                # Typically found when we are trying to read the character name for a slot that is not filled
+                print 'Skipping unfilled slot'
+                print
