@@ -8,8 +8,9 @@ races = ['Human', 'Elf', '', 'Hobbit', '', 'Half-Orc', 'Gnome']
 sexes = ['Male', 'Female']
 status = ['OK', '', 'Old', '', 'Dead', '', 'Poisoned']  # Stoned, Paralyzed, Possessed, Nuts
 
-class character(object):
-    _bindata= None
+
+class Character(object):
+    _bindata = None
 
     def __init__(self):
         pass
@@ -17,13 +18,27 @@ class character(object):
     def from_bindata(self, bindata):
         self._bindata = bindata
 
+    def __data_as_hexstring(self, data):
+        s = t = ''
+        for el in data:
+            s += hexlify(el) + ' '
+            t += str(int(hexlify(el), 16)) + '\t'   # Numeric representation
+        return s
+
+    @property
+    def isparty(self):
+        return self.char_name.startswith('*')
+
     @property
     def bindata(self):
         # Print the bin data as hex
+        """
         s = t = ''
         for el in self._bindata:
             s += hexlify(el) + ' '
             t += str(int(hexlify(el),16)) + '\t' # Numeric representation
+        """
+        s = self.__data_as_hexstring(self._bindata)
         return '{0:20}\t{1:<10}'.format("char name", s)
 
     @property
@@ -33,7 +48,7 @@ class character(object):
         bin = self._bindata[0:16]
         for c in bin[1:]:
             a = hexlify(c)
-            charname += chr(int(hex(int(a,16)-0x80), 16))
+            charname += chr(int(hex(int(a, 16)-0x80), 16))
         return charname
 
     @property
@@ -101,32 +116,32 @@ class character(object):
     @property
     def char_class(self):
         bin = self._bindata[42]
-        return classes[int(hexlify(bin),16)]
+        return classes[int(hexlify(bin), 16)]
 
     @property
     def char_race(self):
         bin = self._bindata[43]
-        return races[int(hexlify(bin),16)]
+        return races[int(hexlify(bin), 16)]
 
     @property
     def char_sex(self):
         bin = self._bindata[44]
-        return sexes[int(hexlify(bin),16)]
+        return sexes[int(hexlify(bin), 16)]
 
     @property
     def char_portrait(self):
         bin = self._bindata[45]
-        return int(hexlify(bin),16)
+        return int(hexlify(bin), 16)
 
     @property
     def char_status(self):
         bin = self._bindata[46]
-        return status[int(hexlify(bin),16)]
+        return status[int(hexlify(bin), 16)]
 
     @property
     def char_ac(self):
         bin = self._bindata[47]
-        return 10 - int(hexlify(bin),16)
+        return 10 - int(hexlify(bin), 16)
 
     # offset 48 unidentified
 
@@ -141,7 +156,6 @@ class character(object):
             #print ite
         return items
 
-
     # Unidentified 16 bytes (85 + 16 = 101)
 
     # Special abilities: 3 bytes
@@ -155,6 +169,11 @@ class character(object):
         listattrs = map(ord, binabilities.decode('hex'))
         return listattrs
 
-
     # Unidentified 24 bytes (104 + 24 = 128), first char bytes are possibly spell data?
 
+    @property
+    def unidentifieddata(self):
+        # This data is unknown at this time
+        return '{0} / {1} / {2}'.format(self.__data_as_hexstring(self._bindata[48]),
+                                        self.__data_as_hexstring(self._bindata[85:101]),
+                                        self.__data_as_hexstring(self._bindata[104:128]))
