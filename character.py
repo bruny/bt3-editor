@@ -1,5 +1,6 @@
 
 from binascii import hexlify
+from items import item
 
 classes = ['Warrior', 'Wizard', 'Sorcerer', 'Conjurer', 'Magician', 'Rogue', 'Bard', 'Paladin', 'Hunter', 'Monk',
            'Archmage', 'Chronomancer', 'Geomancer', 'Monster'] # fill to 255 with monster slots
@@ -27,12 +28,18 @@ class character(object):
 
     @property
     def char_name(self):
+        # If charname starts with *, it's a party; need to work out how parties are structured
         charname = ''
         bin = self._bindata[0:16]
         for c in bin[1:]:
             a = hexlify(c)
             charname += chr(int(hex(int(a,16)-0x80), 16))
         return charname
+
+    @property
+    def char_hexname(self):
+        bin = self._bindata[0:16]
+        return hexlify(bin)
 
     @property
     def char_attrs(self):
@@ -122,3 +129,32 @@ class character(object):
         return 10 - int(hexlify(bin),16)
 
     # offset 48 unidentified
+
+    # Items: 12 slots of 3 bytes (49 + 36 = 85)
+    @property
+    def char_items(self):
+        items = []
+        for i in range(0,12):
+            bin = self._bindata[48+(i*3)+1:48+(i*3)+3+1]
+            ite = item(id=int(hexlify(bin[1]), 16), equipped=hexlify(bin[0]), charges=hexlify(bin[2]))
+            items.append(ite.as_formatted_string())
+            #print ite
+        return items
+
+
+    # Unidentified 16 bytes (85 + 16 = 101)
+
+    # Special abilities: 3 bytes
+    # These are percentages - refer to http://online.sfsu.edu/chrism/hexval.html
+    # http://stackoverflow.com/questions/15852122/hex-transparency-in-colors
+    # http://stackoverflow.com/a/27435811
+    @property
+    def char_abilities(self):
+        bin = self._bindata[101:104]
+        binabilities = hexlify(bin)
+        listattrs = map(ord, binabilities.decode('hex'))
+        return listattrs
+
+
+    # Unidentified 24 bytes (104 + 24 = 128), first char bytes are possibly spell data?
+
