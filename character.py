@@ -159,21 +159,29 @@ class Character(object):
     # Unidentified 16 bytes (85 + 16 = 101)
 
     # Special abilities: 3 bytes
-    # These are percentages - refer to http://online.sfsu.edu/chrism/hexval.html
-    # http://stackoverflow.com/questions/15852122/hex-transparency-in-colors
-    # http://stackoverflow.com/a/27435811
+    # These are percentages, refer to http://stackoverflow.com/questions/15852122/hex-transparency-in-colors,
+    # specifically http://stackoverflow.com/a/27435811 and http://stackoverflow.com/a/29141832
     @property
     def char_abilities(self):
-        bin = self._bindata[101:104]
-        binabilities = hexlify(bin)
-        listattrs = map(ord, binabilities.decode('hex'))
-        return listattrs
+        """
+        Bard: ability 0 is number of bard tunes left
+        Thief: ability 0 = disarm traps, 1 = identify chest, identify item, 2 = hide in shadows, critical hit
+        Hunter: ability 0 = critical hit
+        """
+        abilities = []
+        for i in range(0, 3):
+            bin = self._bindata[101 + i]
+            x = int(hexlify(bin), 16)
+            d = int(float(x) / 255 * 100)
+            abilities.append(d)
+        return abilities
 
     # Unidentified 24 bytes (104 + 24 = 128), first char bytes are possibly spell data?
 
     @property
     def unidentifieddata(self):
         # This data is unknown at this time
+        # ? Number of attacks? Mission flags?
         return '{0} / {1} / {2}'.format(self.__data_as_hexstring(self._bindata[48]),
                                         self.__data_as_hexstring(self._bindata[85:101]),
                                         self.__data_as_hexstring(self._bindata[104:128]))
