@@ -105,3 +105,20 @@ class character(object):
     def char_sex(self):
         bin = self._bindata[44]
         return sexes[int(hexlify(bin),16)]
+
+    @property
+    def char_portrait(self):
+        bin = self._bindata[45]
+        return int(hexlify(bin),16)
+
+    @property
+    def char_status(self):
+        bin = self._bindata[46]
+        return status[int(hexlify(bin),16)]
+
+    @property
+    def char_ac(self):
+        bin = self._bindata[47]
+        return 10 - int(hexlify(bin),16)
+
+    # offset 48 unidentified
