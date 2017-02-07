@@ -22,27 +22,7 @@ import sys
 from items import item
 from character import Character
 
-def reversehex3(hexes):
-    # Note that we expect a list of integers in base 10 format
-    print hexes
-    hexes.reverse()
-    print hexes
 
-# Item FAQ http://www.bardstaleonline.com/files/!docs/bt3-faq-by-yuandy.txt
-
-def reversehex2(hexes):
-    # Note that we expect a list of binary values e.g. \x89 etc
-    print hexes
-
-    hexes.reverse()
-    print hexes
-    joined = ''.join(map(str, hexes))
-    print joined    # Str at this stage
-    print type(joined)
-
-    print hexlify(joined)
-    print int(hexlify(joined), 16)   # Here we are
-    return int(hexlify(joined), 16)
 
 # Given a binary hex value (e.g. c1), returns the numeric value (93)
 def bin2num(bin):
@@ -52,39 +32,11 @@ def bin2num(bin):
 def bin2hex(bin):
     return hexlify(bin)
 
-def reversehex(hexes):
-    print hexes
 
-    hexes.reverse()
-    print hexes
-    joined = ''.join(map(str, hexes))
-    print joined    # Str at this stage
-    print type(joined)
-    hexval = hex(int(joined,16))
-    print int(hexval, 16)   # Here we are
-    return int(hexval, 16)
-
-classes = ['Warrior', 'Wizard', 'Sorcerer', 'Conjurer', 'Magician', 'Rogue', 'Bard', 'Paladin', 'Hunter', 'Monk',
-           'Archmage', 'Chronomancer', 'Geomancer', 'Monster'] # fill to 255 with monster slots
-races = ['Human', 'Elf', '', 'Hobbit', '', 'Half-Orc', 'Gnome']
-sexes = ['Male', 'Female']
-status = ['OK', '', 'Old', '', 'Dead', '', 'Poisoned']  # Stoned, Paralyzed, Possessed, Nuts
 direction = ['North', 'South', 'East', 'West']
 
 dimensions = ['', 'Earth', 'Arboria', 'Gelidia']
 
-
-class bt3char(object):
-    def __init__(self):
-        pass
-
-def get_name(rawdata):
-    charname = ''
-    for c in rawdata[1:]:
-        a = hexlify(c)
-        charname += chr(int(hex(int(a,16)-0x80), 16))
-
-    return charname
 
 # Skara Brae =
 
@@ -138,44 +90,29 @@ if __name__ == "__main__":
     """ Show how to convert a readable name to the hex string to find
     """
     if 1:
-        name = 'aaaa'
+        name = 'VALARIAN'
         hexname = []
+        normalname = []
         offset = hexlify(name)
         print offset
         for i in name:
+            print hex(ord(i))
+            normalname.append(hex(ord(i)))
             hexname.append(hex(ord(i)+0x80))
             #print hex(ord(i))   # Readable string
             #print hex(ord(i)+0x80)  # Written string on disk
-        print ' '.join(hexname)
+        print '{0} (Offset by 0x80) {1}'.format(name, ' '.join(hexname))
+        print '{0} (Normal) {1}'.format(name, ' '.join(normalname))
 
 
-    #reversehex([b'ba', b'a4', b'02', b'00'])
-    #sys.exit(-1)
-    # Camp - 146687 (1-34)
-    start = 139775
-    start_save_roster = 139775
-    start_camp_roster = 144127
-    #start = 144895
-
-    # Current save - 139775
-    # Saved game character roster starts at 139775, for 27 x 128 byte records
-    # Roster starts at 144127 (i.e. characters in camp) for 34 x 128 byte records
-
-    #... 3074 bytes later
-    # 145921 = Start of *Interplayers (started with AA) (16 chars)
-    # ... 2048 bytes later
-    # 147969 = Start of *Heroes
-    # 148096 = Start of Storage1
-    # 146176 = Start of Gems1
-    # 145936 = Start of Ironpants (first instance)
-    # 146688 = Start of Ironpants (second instance)
-
-
+    start_save_roster = 139775  # Start of the 7 active save game characters, 27 x 128 byte records
+    start_camp_roster = 144127  # Start of the characters stored in the camp, 34 x 128 byte records
 
     with open(args.disk, 'r+b') as di:
 
         #09 through 18 (09, 0A, 0B, 0C, 0D, 0E, 0F, 10, 11, 12)
 
+        # Read save game data
         mm = mmap.mmap(di.fileno(), 0)
         # 141952/53
         # 143619 - NO dungeon? 1f = arboria, 20 = ciera brannia?
