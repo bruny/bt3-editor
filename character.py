@@ -44,6 +44,7 @@ class Character(object):
     @property
     def char_name(self):
         # If charname starts with *, it's a party; need to work out how parties are structured
+        # Names are in high-ascii, so need to offset by 0x80. High ASCII is quite common on Apple II
         charname = ''
         bin = self._bindata[0:16]
         for c in bin[1:]:

@@ -1,3 +1,5 @@
+# Item FAQ http://www.bardstaleonline.com/files/!docs/bt3-faq-by-yuandy.txt
+
 # Ref http://bardstaleonline.com/files/!docs/bt1-3-items.txt
 # dos2unix bt1-3-items.txt
 # cat bt1-3-items.txt | cut -c 40- | awk -IFS="\t" '{printf("\"%s\", ", $0)}'
@@ -39,7 +41,7 @@ items = ['-EMPTY SLOT-', 'Torch', 'Lamp', 'Broadsword', 'Short Sword', 'Dagger',
 
 class item(object):
     _id = 0
-    _equipped = False
+    _equipped = False   # 0 or 1; if 81, then it is "not known", 02 - can't use
     _charges = 0
 
     # FIXME TODO Indicator whether usable by a particular class
